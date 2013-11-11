@@ -3,6 +3,7 @@ package org.classfoo.tools.extractintimate;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,6 +26,12 @@ public class TestExtractIntimate {
 		ApplicationContext context = SpringContext.initSpringContext();
 		ExtractIntimate intimate = context.getBean(ExtractIntimate.class);
 		//配置基本的设置
+		//this.parseNovel1(context, intimate);
+		this.parseNovel2(context, intimate);
+	}
+
+	private void parseNovel1(ApplicationContext context, ExtractIntimate intimate) throws UnsupportedEncodingException,
+			SQLException, IOException {
 		ExtractIntimatePropertiesImpl properties = new ExtractIntimatePropertiesImpl();
 		properties.setThirdPersonFemale('她');
 		properties.setThirdPersonMale('他');
@@ -47,13 +54,62 @@ public class TestExtractIntimate {
 		roles.add(new RoleImpl("爸爸", Arrays.asList(new String[] { "父亲" }), Role.TYPE_MALE));
 		roles.add(new RoleImpl("妈妈", Arrays.asList(new String[] { "母亲" }), Role.TYPE_FEMALE));
 		roles.add(new RoleImpl("姐姐", Arrays.asList(new String[] { "姐" }), Role.TYPE_FEMALE));
-		roles.add(new RoleImpl("妹妹", Arrays.asList(new String[] { "妹" }), Role.TYPE_FEMALE));
-		roles.add(new RoleImpl("哥哥", Arrays.asList(new String[] { "哥" }), Role.TYPE_MALE));
-		roles.add(new RoleImpl("弟弟", Arrays.asList(new String[] { "弟" }), Role.TYPE_MALE));
+		//roles.add(new RoleImpl("妹妹", Arrays.asList(new String[] { "妹" }), Role.TYPE_FEMALE));
+		//roles.add(new RoleImpl("哥哥", Arrays.asList(new String[] { "哥" }), Role.TYPE_MALE));
+		//roles.add(new RoleImpl("弟弟", Arrays.asList(new String[] { "弟" }), Role.TYPE_MALE));
 
 		properties.setRoles(roles);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				TestExtractIntimate.class.getResourceAsStream("挪威的森林.txt"), "GB2312"));
+		try {
+			ExtractIntimateResult result = intimate.parse(reader, properties);
+			printForFun(roles, result);
+			outputToDb(context, result);
+		}
+		finally {
+			reader.close();
+		}
+	}
+
+	private void parseNovel2(ApplicationContext context, ExtractIntimate intimate) throws UnsupportedEncodingException,
+			SQLException, IOException {
+		ExtractIntimatePropertiesImpl properties = new ExtractIntimatePropertiesImpl();
+		properties.setThirdPersonFemale('她');
+		properties.setThirdPersonMale('他');
+		properties.setSetenceEnds(new char[] { '。', '？', '；' });
+		ArrayList<Role> roles = new ArrayList<Role>(20);
+		roles.add(new RoleImpl("米尔寇", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("甘道夫", Arrays.asList(new String[] { "米斯兰达" }), Role.TYPE_MALE));
+		roles.add(new RoleImpl("比尔博", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("巴金斯", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("咕鲁", Arrays.asList(new String[] { "史麦戈" }), Role.TYPE_MALE));
+		roles.add(new RoleImpl("索伦", Arrays.asList(new String[] { "魔君" }), Role.TYPE_MALE));
+		roles.add(new RoleImpl("波罗莫", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("亚拉冈", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("佛罗多", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("汤姆.庞巴迪", Arrays.asList(new String[] { "汤姆" }), Role.TYPE_MALE));
+		roles.add(new RoleImpl("山姆", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("皮聘", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("梅里", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("迪耐瑟", null, Role.TYPE_MALE));
+		roles.add(new RoleImpl("书", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("酒", Arrays.asList(new String[] { "啤酒", "黑啤" }), Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("马", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("剑", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("戒指", Arrays.asList(new String[] { "魔戒" }), Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("洛汗", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("魔多", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("哈比人", Arrays.asList(new String[] { "半身人" }), Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("弓箭", Arrays.asList(new String[] { "弓", "箭" }), Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("朋友", Arrays.asList(new String[] { "好友" }), Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("敌人", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("精灵", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("半兽人", null, Role.TYPE_OBJECT));
+		roles.add(new RoleImpl("戒灵", null, Role.TYPE_MALE));
+
+		properties.setRoles(roles);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				TestExtractIntimate.class.getResourceAsStream("指环王.txt"), "GB2312"));
 		try {
 			ExtractIntimateResult result = intimate.parse(reader, properties);
 			printForFun(roles, result);
@@ -109,10 +165,10 @@ public class TestExtractIntimate {
 			conn.setAutoCommit(false);
 			List<Role> roles = result.getRoles();
 			for (int i = 0; i < roles.size(); i++) {
-				for (int j = 0; j < roles.size(); j++) {
-					if(i == j){
-						continue;
-					}
+				for (int j = i; j < roles.size(); j++) {
+					//					if(i == j){
+					//						continue;
+					//					}
 					Role role1 = roles.get(i);
 					Role role2 = roles.get(j);
 					int count = result.getIntimate(false, role1, role2);

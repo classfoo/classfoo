@@ -12,33 +12,29 @@ import org.classfoo.tools.extractintimate.Role;
  * @author ClassFoo
  * @createdate 2013-11-3
  */
-public class RoleImpl implements Role {
-
-	private String name;
-
-	private List<String> aliasnames;
-
-	private int type;
+public class RoleImpl extends ObjectImpl implements Role {
 
 	public RoleImpl(String name, List<String> aliasnames, int type) {
-		this.name = name;
-		this.aliasnames = aliasnames;
-		this.type = type;
+		super(name, aliasnames, type);
 	}
 
-	public String getName() {
-		return this.name;
+	public int getSex() {
+		return 0;
 	}
 
-	public List<String> getAliasNames() {
-		if (this.aliasnames == null || this.aliasnames.isEmpty()) {
-			return Collections.emptyList();
-		}
-		return this.aliasnames;
+	public int getAge() {
+		return 0;
 	}
 
-	public int getType() {
-		return this.type;
+	public int getEducation() {
+		return 0;
 	}
 
+	public List<String> getHobbits() {
+		return null;
+	}
+
+	public List<String> getJobs() {
+		return null;
+	}
 }

@@ -1,0 +1,21 @@
+直子, null, FEMALE
+渡边, null, MALE
+木月, null, MALE
+突击队, null, MALE
+玲子", null, FEMALE
+绿子, 小林绿|阿绿, FEMALE
+永泽, null, MALE
+初美, null, FEMALE
+女朋友, 女友|女伴, FEMALE
+男朋友, 男友|男伴, FEMALE
+书, 小说|笔记, OBJECT
+酒, 威士忌|啤酒|黑啤|鸡尾酒, OBJECT
+唱片,null, OBJECT
+信,null, OBJECT
+朋友, 好友|闺蜜|同学, OBJECT
+爸爸, 父亲, MALE
+妈妈, 母亲, FEMALE
+姐姐, null, FEMALE
+妹妹, null, FEMALE
+哥哥, 兄, MALE
+弟弟, null, MALE

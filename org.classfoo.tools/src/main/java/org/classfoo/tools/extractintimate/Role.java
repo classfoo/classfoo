@@ -9,29 +9,35 @@ import java.util.List;
  * @author ClassFoo
  * @createdate 2013-11-5
  */
-public interface Role {
-
-	public static final int TYPE_MALE = 0;
-
-	public static final int TYPE_FEMALE = 1;
-
-	public static final int TYPE_OBJECT = 2;
+public interface Role extends Object {
 
 	/**
-	 * 角色的全名
+	 * 获取角色性别
 	 * @return
 	 */
-	public String getName();
+	public int getSex();
 
 	/**
-	 * 角色的别名列表，例如贾宝玉的别名：宝玉
+	 * 获取角色年龄
 	 * @return
 	 */
-	public List<String> getAliasNames();
+	public int getAge();
 
 	/**
-	 * 判定角色类型，可以为男人，女人，物品
+	 * 获取角色教育程度
 	 * @return
 	 */
-	public int getType();
+	public int getEducation();
+
+	/**
+	 * 获取角色的兴趣爱好
+	 * @return
+	 */
+	public List<String> getHobbits();
+
+	/**
+	 * 获取角色的工作，第一个为主要工作，按照顺序排列重要程度
+	 * @return
+	 */
+	public List<String> getJobs();
 }
