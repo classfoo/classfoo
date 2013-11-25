@@ -1,0 +1,359 @@
+package com.sample
+ 
+import org.classfoo.drools.familyrelations.People;
+import org.classfoo.drools.familyrelations.Relation;
+
+rule "母女"
+	when
+		$r1:Relation(relation=="母亲")
+		not(exists(Relation(relation=="女儿",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==false){
+			insert(new Relation("女儿", $r1.b,$r1.a));
+		}
+end
+
+rule "女母"
+	when
+		$r1:Relation(relation=="女儿")
+		not(exists(Relation(relation=="母亲",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==false){
+			insert(new Relation("母亲", $r1.b,$r1.a));
+		}
+end
+
+rule "母子"
+	when
+		$r1:Relation(relation=="母亲")
+		not(exists(Relation(relation=="儿子",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==true){
+			insert(new Relation("儿子", $r1.b,$r1.a));
+		}
+end
+
+rule "子母"
+	when
+		$r1:Relation(relation=="儿子")
+		not(exists(Relation(relation=="母亲",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==false){
+			insert(new Relation("母亲", $r1.b,$r1.a));
+		}
+end
+
+rule "父子"
+	when
+		$r1:Relation(relation=="父亲")
+		not(exists(Relation(relation=="儿子",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==true){
+			insert(new Relation("儿子", $r1.b,$r1.a));
+		}
+end
+
+rule "子父"
+	when
+		$r1:Relation(relation=="儿子")
+		not(exists(Relation(relation=="父亲",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==true){
+			insert(new Relation("父亲", $r1.b,$r1.a));
+		}
+end
+
+rule "父女"
+	when
+		$r1:Relation(relation=="父亲")
+		not(exists(Relation(relation=="女儿",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==false){
+			insert(new Relation("女儿", $r1.b,$r1.a));
+		}
+end
+
+rule "女父"
+	when
+		$r1:Relation(relation=="女儿")
+		not(exists(Relation(relation=="父亲",a==$r1.b,b==$r1.a)))
+	then
+		if($r1.b.ismale==true){
+			insert(new Relation("父亲", $r1.b,$r1.a));
+		}
+end
+
+rule "妻夫"
+	when
+		$r1:Relation(relation=="妻子")
+		not(exists(Relation(relation=="丈夫",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("丈夫", $r1.b,$r1.a));
+end
+
+rule "夫妻"
+	when
+		$r1:Relation(relation=="丈夫")
+		not(exists(Relation(relation=="妻子",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("妻子", $r1.b,$r1.a));
+end
+
+rule "弟姐"
+	when
+		$r1:Relation(relation=="弟弟")
+		exists(People(name==$r1.b.name,ismale==false))
+		not(exists(Relation(relation=="姐姐",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("姐姐", $r1.b,$r1.a));
+end
+
+rule "姐弟"
+	when
+		$r1:Relation(relation=="姐姐")
+		exists(People(name==$r1.b.name,ismale==true))
+		not(exists(Relation(relation=="弟弟",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("弟弟", $r1.b,$r1.a));
+end
+
+rule "哥妹"
+	when
+		$r1:Relation(relation=="哥哥",b.ismale==false)
+		not(exists(Relation(relation=="妹妹",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("妹妹", $r1.b,$r1.a));
+end
+
+rule "妹哥"
+	when
+		$r1:Relation(relation=="妹妹", b.ismale==true)
+		not(exists(Relation(relation=="哥哥",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("哥哥", $r1.b,$r1.a));
+end
+
+rule "哥弟"
+	when
+		$r1:Relation(relation=="哥哥",b.ismale==true)
+		not(exists(Relation(relation=="弟弟",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("弟弟", $r1.b,$r1.a));
+end
+
+rule "弟哥"
+	when
+		$r1:Relation(relation=="弟弟",b.ismale==true)
+		not(exists(Relation(relation=="哥哥",a==$r1.b,b==$r1.a)))
+	then
+		insert(new Relation("哥哥", $r1.b,$r1.a));
+end
+
+rule "弟弟的弟弟是弟弟"
+	when
+		$r1:Relation(relation=="弟弟")
+		$r2:Relation(relation=="弟弟", b==$r1.a)
+		not(exists(Relation(relation=="弟弟", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("弟弟", $r2.a,$r1.b));
+end
+
+rule "弟弟的妹妹是妹妹"
+	when
+		$r1:Relation(relation=="弟弟")
+		$r2:Relation(relation=="妹妹", b==$r1.a)
+		not(exists(Relation(relation=="妹妹", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("妹妹", $r2.a,$r1.b));
+end
+
+rule "妹妹的弟弟是弟弟"
+	when
+		$r1:Relation(relation=="妹妹")
+		$r2:Relation(relation=="弟弟", b==$r1.a)
+		not(exists(Relation(relation=="弟弟", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("弟弟", $r2.a,$r1.b));
+end
+
+rule "妹妹的妹妹是妹妹"
+	when
+		$r1:Relation(relation=="妹妹")
+		$r2:Relation(relation=="妹妹", b==$r1.a)
+		not(exists(Relation(relation=="妹妹", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("妹妹", $r2.a,$r1.b));
+end
+
+rule "哥哥的哥哥是哥哥"
+	when
+		$r1:Relation(relation=="哥哥")
+		$r2:Relation(relation=="哥哥",b==$r1.a)
+		not(exists(Relation(relation=="哥哥", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("哥哥", $r2.a,$r1.b));
+end
+
+rule "哥哥的姐姐是姐姐"
+	when
+		$r1:Relation(relation=="哥哥")
+		$r2:Relation(relation=="姐姐",b==$r1.a)
+		not(exists(Relation(relation=="姐姐", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姐姐", $r2.a,$r1.b));
+end
+
+rule "姐姐的哥哥是哥哥"
+	when
+		$r1:Relation(relation=="姐姐")
+		$r2:Relation(relation=="哥哥",b==$r1.a)
+		not(exists(Relation(relation=="哥哥", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("哥哥", $r2.a,$r1.b));
+end
+
+rule "姐姐的姐姐是姐姐"
+	when
+		$r1:Relation(relation=="姐姐")
+		$r2:Relation(relation=="姐姐",b==$r1.a)
+		not(exists(Relation(relation=="姐姐", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姐姐", $r2.a,$r1.b));
+end
+
+rule "父亲的弟弟是叔叔"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="弟弟",b==$r1.a)
+		not(exists(Relation(relation=="叔叔", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("叔叔", $r2.a,$r1.b));
+end
+
+rule "父亲的哥哥是伯伯"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="哥哥", b==$r1.a)
+		not(exists(Relation(relation=="伯伯", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("伯伯", $r2.a,$r1.b));
+end
+
+rule "父亲的姐姐是姑妈"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="姐姐", b==$r1.a)
+		not(exists(Relation(relation=="姑妈", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姑妈", $r2.a,$r1.b));
+end
+
+rule "父亲的妹妹是姑妈"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="妹妹", b==$r1.a)
+		not(exists(Relation(relation=="姑妈", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姑妈", $r2.a,$r1.b));
+end
+
+rule "母亲的弟弟是表叔"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="弟弟",b==$r1.a)
+		not(exists(Relation(relation=="表叔", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("表叔", $r2.a,$r1.b));
+end
+
+rule "母亲的哥哥是表伯"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="哥哥", b==$r1.a)
+		not(exists(Relation(relation=="表伯", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("表伯", $r2.a,$r1.b));
+end
+
+rule "母亲的姐姐是姨妈"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="姐姐", b==$r1.a)
+		not(exists(Relation(relation=="姨妈", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姨妈", $r2.a,$r1.b));
+end
+
+rule "母亲的妹妹是姨妈"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="妹妹", b==$r1.a)
+		not(exists(Relation(relation=="姨妈", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("姨妈", $r2.a,$r1.b));
+end
+
+rule "父亲的母亲是祖母"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="母亲",b==$r1.a)
+		not (exists(Relation(relation=="祖母", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("祖母", $r2.a,$r1.b));
+end
+
+rule "父亲的父亲是祖父"
+	when
+		$r1:Relation(relation=="父亲")
+		$r2:Relation(relation=="父亲",b==$r1.a)
+		not (exists(Relation(relation=="祖父", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("祖父", $r2.a,$r1.b));
+end
+
+rule "母亲的母亲是外祖母"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="母亲",b==$r1.a)
+		not (exists(Relation(relation=="外祖母", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("外祖母", $r2.a,$r1.b));
+end
+
+rule "母亲的父亲是外祖父"
+	when
+		$r1:Relation(relation=="母亲")
+		$r2:Relation(relation=="父亲",b==$r1.a)
+		not (exists(Relation(relation=="外祖父", a==$r2.a,b==$r1.b)))
+	then
+		insert(new Relation("外祖父", $r2.a,$r1.b));
+end
+
+rule "谁是表哥"
+	when
+		$r1:Relation(relation=="表伯"||relation=="表叔"||relation=="姨妈")
+		$r2:Relation(relation=="儿子",b==$r1.a)
+		not (exists(Relation(relation=="表哥", a==$r2.a,b==$r1.b)))
+	then
+		if($r2.a.age>=$r1.b.age){
+			insert (new Relation("表哥",$r2.a,$r1.b));
+		}
+end
+
+rule "谁是表弟"
+	when
+		$r1:Relation(relation=="表伯",relation=="表叔",relation=="姨妈")
+		$r2:Relation(relation=="儿子",b==$r1.a)
+		not (exists(Relation(relation=="表弟", a==$r2.a,b==$r1.b)))
+	then
+		if($r2.a.age<$r1.b.age){
+			insert (new Relation("表弟",$r2.a,$r1.b));
+		}
+end
+
+rule "输出"
+	when
+		Relation($a:a,$b:b,$r:relation);
+	then
+		System.out.println($a.getName() + "是" + $b.getName() + "的" + $r);
+end
